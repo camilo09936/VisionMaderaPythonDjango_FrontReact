@@ -1,0 +1,71 @@
+{
+  "usuarios": [
+    {
+      "primerNombre": "Camilo",
+      "segundoNombre": "Andres",
+      "primerApellido": "Perez",
+      "segundoApellido": "Florez",
+      "documento": "1001015565",
+      "fechaNacimiento": "2002-07-30",
+      "telefono": "3016689694",
+      "direccion": "Calle 70 #55-122",
+      "correo": "camilo.perez10@correo.tdea.edu.co",
+      "contrasena": "1234",
+      "id": "OX4Y_YwDtO4"
+    },
+    {
+      "primerNombre": "Mario",
+      "segundoNombre": "Alberto",
+      "primerApellido": "Campo",
+      "segundoApellido": "Pineda",
+      "documento": "2471515",
+      "fechaNacimiento": "1987-06-24",
+      "telefono": "3015382456",
+      "direccion": "Itagui",
+      "correo": "MarioA@test.com",
+      "contrasena": "12345",
+      "id": "20Sc1lTe28c"
+    },
+    {
+      "primerNombre": "Reynaldo",
+      "segundoNombre": "Josue",
+      "primerApellido": "Fabregas",
+      "segundoApellido": "Montoya",
+      "documento": "1044621438",
+      "fechaNacimiento": "2007-02-20",
+      "telefono": "3237297579",
+      "direccion": "cr58a calle47",
+      "correo": "rrynolds49@gmail.com",
+      "contrasena": "reynalditoelloquito",
+      "id": "p22g05mvSTQ"
+    },
+    {
+      "primerNombre": "juan",
+      "segundoNombre": "pablo",
+      "primerApellido": "morales",
+      "segundoApellido": "gomez",
+      "documento": "111111",
+      "fechaNacimiento": "2000-12-12",
+      "telefono": "3224455667",
+      "direccion": "32",
+      "correo": "juan.correo@test.com",
+      "contrasena": "1234",
+      "id": "fb4_c-Sr2ck"
+    }
+  ],
+  "citas": [
+    {
+      "fecha": "2026-04-29",
+      "hora": "15:30",
+      "descripcion": "Cita Con Diseñador de Interiores",
+      "id": "0gwlSbxXBwI"
+    },
+    {
+      "fecha": "2025-05-25",
+      "hora": "00:12",
+      "descripcion": "me duele el brazo",
+      "id": "T-r8eYuZAbU"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

@@ -1,0 +1,228 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap");
+
+.pantalla-registro{
+    background: url('../assets/ResourcesLogin/FondoLogin.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 20px;
+    font-family: "Open Sans", sans-serif;
+    overflow-y: auto;
+}
+
+.tarjeta-registro{
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 28px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0 ,0 ,0 , 0.3);
+}
+
+.tarjeta-registro h2{
+    margin-top: 5px;
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 28px;
+}
+
+.formulario-registro{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.campo-registro{
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    margin: 22px 0;
+}
+
+.campo-registro input{
+    width: 100%;
+    height: 35px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: white;
+}
+
+.campo-registro input.input-correcto ~ .check-correcto{
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+.campo-registro input:focus.input-error{
+    background: rgba(255, 77, 77, 0.25);
+}
+
+.campo-registro label{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+    transition: 0.2s ease;
+    font-size: 15px;
+}
+
+.campo-registro input:focus ~ label,
+.campo-registro input:not(:placeholder-shown) ~ label,
+.campo-registro input[type="date"]:valid ~ label,
+.campo-registro input[type="date"]:focus ~ label{
+    top: -12px;
+    font-size: 11px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.campo-registro input[type="date"] ~ .check-correcto{
+    right: 32px;
+    top: 45%;
+}
+
+.boton-registro{
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: #fff;
+    color: #111;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.boton-registro:hover:not(:disabled){
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+}
+
+.boton-registro:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mensaje-error{
+    color: #ff6b6b;
+    font-size: 13px;
+    margin-bottom: 15px;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 8px;
+    border-radius: 4px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from{opacity: 0; transform: translateY(-5px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.link-volver{
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+.link-volver:hover{
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator{
+    filter: invert(1);
+    cursor: pointer;
+    position: absolute;
+    right: 5px;
+}
+
+.icono-ojo-registro{
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 22px;
+    height: auto;
+    filter: invert(1);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.icono-ojo-registro:hover{
+    opacity: 1;
+}
+
+input[type="date"]::-webkit-datetime-edit {
+    color: transparent;
+}
+
+input[type="date"]:focus::-webkit-datetime-edit,
+input[type="date"]:not(:placeholder-shown)::-webkit-datetime-edit {
+    color: white !important;
+}
+
+.input-error{
+    background: rgba(255, 77, 77, 0.18);
+    border: 1px solid rgba(255, 77, 77, 0.6);
+    border-radius: 6px;
+    padding-left: 8px;
+    box-shadow: 0 0 6px rgba(255, 77, 77, 0.9);
+    animation: shake 0.2s ease-in-out;
+}
+
+@keyframes shake{
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+}
+
+.input-correcto{
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid rgba(0, 255, 136, 0.6);
+    border-radius: 6px;
+    padding-left: 8px;
+    box-shadow: 0 0 6px rgba(0, 255, 136, 0.8);
+}
+
+.check-correcto{
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.8);
+    color: #00ff88;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0;
+    transition: all 0.2s ease;
+}
+
+.check-con-ojo{
+    right: 32px;
+}
+
+.mensaje-campo-error{
+    color: #ff6b6b;
+    position: absolute;
+    font-size: 12px;
+    margin-top: 5px;
+    animation: fadeIn 0.2s ease-in;
+}
