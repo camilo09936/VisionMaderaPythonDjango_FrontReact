@@ -149,3 +149,10 @@ SIMPLE_JWT={
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+
+OLLAMA_CONFIG = {
+    "BASE_URL": "http://127.0.0.1:11434",
+    "MODEL": "llama3.2:3b",
+    "TIMEOUT": 120,
+}
