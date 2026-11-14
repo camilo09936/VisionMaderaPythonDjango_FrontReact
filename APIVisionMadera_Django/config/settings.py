@@ -9,12 +9,14 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'visionmadera',
+    'ia.apps.IaConfig',
     
 ]
 
@@ -149,3 +152,28 @@ SIMPLE_JWT={
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+OLLAMA_CONFIG = {
+    "BASE_URL": "http://127.0.0.1:11434",
+    "MODEL": "llama3.2:3b",
+    "TIMEOUT": 120,
+}
+
+#Configuracion del modelo de embeddings
+OLLAMA_EMBEDDING_MODEL= os.getenv(
+    "OLLAMA_EMBEDDING_MODEL",
+    "nomic-embed-text-v2-moe"
+)
+
+#Configuracion de ChromaDB
+CHROMA_PERSIST_DIRECTORY=(
+    BASE_DIR / os.getenv(
+        "CHROMA_PERSIST_DIRECTORY",
+        "data/chroma"
+    )
+)
+
+CHROMA_COLLECTION= os.getenv(
+    "CHROMA_COLLECTION",
+    "visionmadera"
+)
