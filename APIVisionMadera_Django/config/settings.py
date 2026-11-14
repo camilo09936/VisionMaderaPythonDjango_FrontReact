@@ -39,11 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',  # <--- Requerido para habilitar el paquete de CORS
     'visionmadera',
-    
+    'ia',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # <--- Debe estar siempre en la parte superior
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,13 +81,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
-        'NAME': 'VisionMaderaPython',
+        'NAME': 'VisionMadera',
         'USER': 'sa',
-        'PASSWORD': '1001015565Sc.',
+        'PASSWORD': 'Admin12345*',
         'HOST': 'localhost',
         'PORT': '1433',
         'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
+            'driver': 'ODBC Driver 18 for SQL Server',
             'extra_params': 'TrustServerCertificate=yes;',
         },
     }
@@ -139,13 +141,13 @@ MAILERS = {
     },
 }
 
-REST_FRAMEWORK={
-    'DEFAULT_AUTHENTICATION_CLASSES':(
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
-SIMPLE_JWT={
+SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
@@ -156,3 +158,6 @@ OLLAMA_CONFIG = {
     "MODEL": "llama3.2:3b",
     "TIMEOUT": 120,
 }
+
+# Configuración de CORS permitiendo peticiones locales (Vite / React)
+CORS_ALLOW_ALL_ORIGINS = True
