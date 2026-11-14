@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserIcon from '../assets/ResourcesHome/Usericon.png';
 import LogoVM from '../assets/ResourcesLogin/LogoVisionMadera.png';
+import LogoTablon from '../assets/ResourcesHome/tablon-2.png';
 import { obtenerLista, obtenerMisCitas } from "../api";
 
 export default function Home() {
@@ -10,6 +11,13 @@ export default function Home() {
   const [citas, setCitas] = useState([]);
   const [sedes, setSedes] = useState([]);
   const [bloques, setBloques] = useState([]);
+
+  const [chatAbierto, setChatAbierto] = useState(false);
+  const [inputMensaje, setInputMensaje] = useState("");
+  const [cargandoChat, setCargandoChat] = useState(false);
+  const [mensajes, setMensajes] = useState([
+    { sender: "bot", text: "¡Hola! Soy Tablón, tu asistente de Madecentro. ¿En qué puedo ayudarte hoy?" }
+  ]);
   
   const nombreUsuario = localStorage.getItem("nombreUsuario");
   const fotoPerfil =
@@ -18,7 +26,6 @@ export default function Home() {
     
   const navigate = useNavigate();
 
-  // Traer citas de forma segura controlando errores 500 o estructuras vacías
   useEffect(() => {
     obtenerMisCitas()
       .then(setCitas)
@@ -35,34 +42,71 @@ export default function Home() {
       setBloques(dataBloques);
     }).catch(err => console.error("Error cargando catálogos:", err));
   }, []);
-// Verificar si el token ha expirado al cargar el Home
-useEffect(() => {
+
+  useEffect(() => {
     const token = localStorage.getItem("token");
     
     if (!token) {
-        // No hay token, redirige al login
         navigate("/", { state: { mensaje: "Sesión expirada. Por favor inicia sesión de nuevo." } });
         return;
     }
 
-    // Decodifica el token para revisar su expiración
     try {
         const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
         const ahora = Math.floor(Date.now() / 1000);
         
         if (payload.exp < ahora) {
-            // Token expirado, limpia localStorage y redirige
             localStorage.removeItem("token");
             localStorage.removeItem("nombreUsuario");
             localStorage.removeItem("documentoUsuario");
             navigate("/", { state: { mensaje: "Sesión expirada. Por favor inicia sesión de nuevo." } });
         }
     } catch (error) {
-        // Token inválido
         localStorage.clear();
         navigate("/", { state: { mensaje: "Sesión expirada. Por favor inicia sesión de nuevo." } });
     }
-}, []);
+  }, []);
+
+  const enviarMensajeChat = async (e) => {
+    e.preventDefault();
+    if (!inputMensaje.trim() || cargandoChat) return;
+
+    const preguntaUsuario = inputMensaje;
+    setMensajes((prev) => [...prev, { sender: "user", text: preguntaUsuario }]);
+    setInputMensaje("");
+    setCargandoChat(true);
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/ia/tablon/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ pregunta: preguntaUsuario }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensajes((prev) => [...prev, { sender: "bot", text: data.respuesta }]);
+      } else {
+        setMensajes((prev) => [
+          ...prev, 
+          { sender: "bot", text: `⚠️ ${data.error || data.detail || "Hubo un problema al procesar tu consulta."}` }
+        ]);
+      }
+    } catch (error) {
+      setMensajes((prev) => [
+        ...prev, 
+        { sender: "bot", text: "❌ No pude conectarme con el servidor. Verifica que Django esté corriendo." }
+      ]);
+    } finally {
+      setCargandoChat(false);
+    }
+  };
 
   return (
     <div
@@ -73,7 +117,6 @@ useEffect(() => {
         position: "relative",
       }}
     >
-      {/* 1. BARRA DE NAVEGACIÓN */}
       <nav
         style={{
           display: "flex",
@@ -127,9 +170,6 @@ useEffect(() => {
         </div>
       </nav>
 
-      {/* 2. SECCIÓN DE BIENVENIDA */}
-
-      
       <section
         style={{
           backgroundColor: "#FDF0E8",
@@ -140,17 +180,17 @@ useEffect(() => {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <img
-    src={UserIcon}
-    alt="Foto de perfil"
-    style={{
-        width: 80,
-        height: 80,
-        borderRadius: "50%",
-        objectFit: "cover",
-        border: "3px solid #E8580A",
-    }}
-/>
+          <img
+            src={UserIcon}
+            alt="Foto de perfil"
+            style={{
+                width: 80,
+                height: 80,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "3px solid #E8580A",
+            }}
+          />
           <div>
             <h1 style={{ fontSize: 26, fontWeight: 600, marginBottom: 8, color: "#1a1a1a" }}>
               Hola, {nombreUsuario}
@@ -181,14 +221,9 @@ useEffect(() => {
             <div style={{ fontSize: 26, fontWeight: 600, color: "#E8580A" }}>{citas.length}</div>
             <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>Citas activas</div>
           </div>
-          {/*<div style={{ backgroundColor: "#fff", borderRadius: 12, padding: "16px 24px", border: "1px solid rgba(232,88,10,0.2)", textAlign: "center" }}>
-            <div style={{ fontSize: 26, fontWeight: 600, color: "#E8580A" }}>{citas.length}</div>
-            <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>Citas realizadas</div>
-          </div>*/}
         </div>
       </section>
 
-      {/* 3. ACCIONES RÁPIDAS */}
       <section style={{ padding: "32px 48px" }}>
         <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 16, color: "#1a1a1a" }}>
           Acciones rápidas
@@ -275,7 +310,6 @@ useEffect(() => {
             const MESES= ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
             const nombreMes= MESES[parseInt(mesStr, 10)-1] || "MES";
 
-            // Sedes y bloques desde la BD
             const sedeCita= sedes.find(s=>s.id_sede==cita.id_sede);
             const bloqueCita= bloques.find(b=>b.id_bloque==cita.id_bloque);
             const nombreSedeReal= sedeCita?sedeCita.nombre:`Sede (ID: ${cita.id_sede})`;
@@ -294,7 +328,7 @@ useEffect(() => {
                     Cita de Diseño Especializado
                   </div>
                   <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>
-                    📍 {nombreSedeReal} • 🕒 {horaReal}
+                    📍 {nombreSedeReal} | 🕒 {horaReal}
                   </div>
                 </div>
               </div>
@@ -303,9 +337,130 @@ useEffect(() => {
         )}
       </section>
 
-      {/* 5. BOTÓN FLOTANTE DE PQRS (Movido a la esquina inferior derecha) */}
+      {chatAbierto && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "100px",
+            right: "30px",
+            width: "350px",
+            height: "450px",
+            backgroundColor: "#fff",
+            borderRadius: "16px",
+            boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            zIndex: 1000,
+            border: "1px solid #eee",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#E8580A",
+              color: "white",
+              padding: "15px",
+              fontWeight: "bold",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <img src={LogoTablon} alt="Tablón" style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover" }} />
+              <span style={{ fontSize: "16px" }}>Tablón - Asistente Madecentro</span>
+            </div>
+            <button
+              onClick={() => setChatAbierto(false)}
+              style={{ background: "none", border: "none", color: "white", fontSize: "18px", cursor: "pointer" }}
+            >
+              ✖
+            </button>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              padding: "15px",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            {mensajes.map((msg, idx) => (
+              <div
+                key={idx}
+                style={{
+                  alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
+                  backgroundColor: msg.sender === "user" ? "#E8580A" : "#e4e6eb",
+                  color: msg.sender === "user" ? "white" : "#111",
+                  padding: "10px 14px",
+                  borderRadius: "14px",
+                  maxWidth: "80%",
+                  fontSize: "14px",
+                  lineHeight: "1.4",
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {msg.text}
+              </div>
+            ))}
+            {cargandoChat && (
+              <div style={{ alignSelf: "flex-start", fontSize: "13px", color: "#666", fontStyle: "italic" }}>
+                Tablón está escribiendo...
+              </div>
+            )}
+          </div>
+
+          <form
+            onSubmit={enviarMensajeChat}
+            style={{
+              display: "flex",
+              borderTop: "1px solid #ddd",
+              padding: "10px",
+              backgroundColor: "#fff",
+            }}
+          >
+            <input
+              type="text"
+              value={inputMensaje}
+              onChange={(e) => setInputMensaje(e.target.value)}
+              placeholder="Escribe tu consulta aquí..."
+              disabled={cargandoChat}
+              style={{
+                flex: 1,
+                border: "1px solid #ccc",
+                borderRadius: "20px",
+                padding: "8px 15px",
+                outline: "none",
+                fontSize: "14px",
+              }}
+            />
+            <button
+              type="submit"
+              disabled={cargandoChat}
+              style={{
+                marginLeft: "8px",
+                backgroundColor: "#E8580A",
+                color: "white",
+                border: "none",
+                borderRadius: "50%",
+                width: "38px",
+                height: "38px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              ➤
+            </button>
+          </form>
+        </div>
+      )}
+
       <div
-        onClick={() => navigate("/pqrs")}
+        onClick={() => setChatAbierto(!chatAbierto)}
         onMouseEnter={() => setCardHover("btn-flotante")}
         onMouseLeave={() => setCardHover(null)}
         style={{
@@ -314,9 +469,9 @@ useEffect(() => {
           right: "30px", 
           backgroundColor: "#E8580A",
           color: "white",
-          width: cardHover === "btn-flotante" ? "180px" : "60px",
-          height: "60px",
-          borderRadius: "30px",
+          width: cardHover === "btn-flotante" ? "180px" : "56px",
+          height: "56px",
+          borderRadius: "28px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -325,11 +480,11 @@ useEffect(() => {
           transition: "all 0.3s ease",
           zIndex: 1000,
           overflow: "hidden",
-          padding: "0 15px",
+          padding: cardHover === "btn-flotante" ? "0 15px" : "0",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", whiteSpace: "nowrap" }}>
-          <span style={{ fontSize: "24px" }}>💬</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", whiteSpace: "nowrap", width: "100%", height: "100%", justifyContent: "center" }}>
+          <img src={LogoTablon} alt="Tablón" style={{ width: "56px", height: "56px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
           {cardHover === "btn-flotante" && (
             <span style={{ fontSize: "14px", fontWeight: "600" }}>
               ¿Necesitas ayuda?
